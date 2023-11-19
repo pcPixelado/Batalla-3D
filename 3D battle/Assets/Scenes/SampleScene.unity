@@ -184,6 +184,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vidaMaxima: 100
+  "da\xF1oAlJugador": 5
+  velocidadMovimiento: 3
 --- !u!136 &19479649
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -678,6 +680,8 @@ MonoBehaviour:
   firePoint: {fileID: 1592976158}
   fuerzaEmpujeArea: 20
   radioEmpujeArea: 10
+  cooldownDuracion: 3
+  danioAlJugador: 100
 --- !u!136 &594732588
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1188,6 +1192,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vidaMaxima: 100
+  "da\xF1oAlJugador": 5
+  velocidadMovimiento: 3
 --- !u!136 &1150865699
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1629,6 +1635,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vidaMaxima: 100
+  "da\xF1oAlJugador": 5
+  velocidadMovimiento: 3
 --- !u!136 &1557994784
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -2072,6 +2080,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vidaMaxima: 100
+  "da\xF1oAlJugador": 5
+  velocidadMovimiento: 3
 --- !u!136 &1786635820
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -2300,6 +2310,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vidaMaxima: 100
+  "da\xF1oAlJugador": 5
+  velocidadMovimiento: 3
 --- !u!136 &1946921430
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -2449,6 +2461,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vidaMaxima: 100
+  "da\xF1oAlJugador": 5
+  velocidadMovimiento: 3
 --- !u!136 &1986533141
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -2703,6 +2717,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vidaMaxima: 100
+  "da\xF1oAlJugador": 5
+  velocidadMovimiento: 3
 --- !u!136 &2137759330
 CapsuleCollider:
   m_ObjectHideFlags: 0

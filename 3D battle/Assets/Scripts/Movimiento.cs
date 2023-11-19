@@ -14,8 +14,20 @@ public class MoverCapsula : MonoBehaviour
 
     public Transform firePoint;
 
-    public float fuerzaEmpujeArea = 5f; // Ajusta la fuerza del empuje
-    public float radioEmpujeArea = 5f; // Ajusta el radio del área de empuje
+    public float fuerzaEmpujeArea = 5f;
+    public float radioEmpujeArea = 5f;
+
+    private float vidaMaxima = 100f;
+    private float vidaActual;
+    private bool puedeRecibirDanio = true;
+    private float cooldownTimer = 0f;
+    public float cooldownDuracion = 3f;
+    public float danioAlJugador = 5f;
+
+    void Start()
+    {
+        vidaActual = vidaMaxima;
+    }
 
     void Update()
     {
@@ -24,6 +36,15 @@ public class MoverCapsula : MonoBehaviour
         Saltar();
         HacerDanioEmpujar();
         EmpujarArea();
+
+        // Actualiza el temporizador de cooldown
+        cooldownTimer += Time.deltaTime;
+
+        // Puedes ajustar el tiempo de cooldown según tus necesidades
+        if (cooldownTimer >= cooldownDuracion)
+        {
+            puedeRecibirDanio = true;
+        }
     }
 
     void Mover()
@@ -91,6 +112,7 @@ public class MoverCapsula : MonoBehaviour
                         if (puedeEmpujar())
                         {
                             enemigo.RecibirDanioEmpujar(10f, direccion * 2f);
+                            RecibirDanio(danioAlJugador); // Aplica daño al jugador
                         }
                     }
                 }
@@ -114,6 +136,7 @@ public class MoverCapsula : MonoBehaviour
                         if (puedeEmpujar())
                         {
                             enemigo.RecibirDanioEmpujar(20f, direccion * 10f);
+                            RecibirDanio(danioAlJugador); // Aplica daño al jugador
                         }
                     }
                 }
@@ -135,6 +158,7 @@ public class MoverCapsula : MonoBehaviour
                     {
                         Vector3 direccion = (enemigo.transform.position - transform.position).normalized;
                         enemigo.RecibirDanioEmpujar(15f, direccion * fuerzaEmpujeArea);
+                        RecibirDanio(danioAlJugador); // Aplica daño al jugador
                     }
                 }
             }
@@ -146,6 +170,15 @@ public class MoverCapsula : MonoBehaviour
         if (collision.gameObject.CompareTag("Suelo"))
         {
             enSuelo = true;
+        }
+
+        if (collision.gameObject.CompareTag("Enemigo"))
+        {
+            Enemigo enemigo = collision.gameObject.GetComponent<Enemigo>();
+            if (enemigo != null)
+            {
+                RecibirDanio(enemigo.dañoAlJugador);
+            }
         }
     }
 
@@ -159,7 +192,42 @@ public class MoverCapsula : MonoBehaviour
 
     bool puedeEmpujar()
     {
-        // Agrega aquí cualquier condición adicional que desees para permitir o no el empuje
-        return true; // Cambia esto según tus necesidades
+        return true; // Puedes ajustar la lógica según tus necesidades
+    }
+
+    public void RecibirDanio(float cantidad)
+    {
+        if (puedeRecibirDanio)
+        {
+            vidaActual -= cantidad;
+            vidaActual = Mathf.Max(vidaActual, 0f);
+
+            ActualizarBarraDeVida();
+
+            if (vidaActual <= 0f)
+            {
+                DerrotarJugador();
+            }
+
+            // Inicia el cooldown al recibir daño
+            IniciarCooldown();
+        }
+    }
+
+    void IniciarCooldown()
+    {
+        puedeRecibirDanio = false;
+        cooldownTimer = 0f;
+    }
+
+    void ActualizarBarraDeVida()
+    {
+        // Puedes agregar aquí la lógica para actualizar la barra de vida del jugador si la tienes.
+    }
+
+    void DerrotarJugador()
+    {
+        Debug.Log("Jugador derrotado");
+        // Implementa aquí cualquier lógica que desees cuando el jugador queda sin vida
     }
 }

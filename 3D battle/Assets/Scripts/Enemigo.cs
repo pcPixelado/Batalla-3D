@@ -5,14 +5,35 @@ public class Enemigo : MonoBehaviour
     public float vidaMaxima = 100f;
     private float vidaActual;
 
+    public float dañoAlJugador = 5f;
+    public float velocidadMovimiento = 3f;
+
+    private Transform jugador; // Referencia al transform del jugador
+
     void Start()
     {
         vidaActual = vidaMaxima;
+        jugador = GameObject.FindGameObjectWithTag("Player").transform; // Asigna la referencia al jugador
     }
 
     void Update()
     {
+        MoverHaciaJugador(); // Llama al nuevo método de movimiento hacia el jugador
+
         // Puedes agregar cualquier lógica adicional que necesites en el Update del enemigo.
+    }
+
+    void MoverHaciaJugador()
+    {
+        // Verifica si la referencia al jugador es válida
+        if (jugador != null)
+        {
+            // Calcula la dirección hacia el jugador
+            Vector3 direccion = (jugador.position - transform.position).normalized;
+
+            // Mueve al enemigo en la dirección del jugador
+            transform.Translate(direccion * velocidadMovimiento * Time.deltaTime);
+        }
     }
 
     public void RecibirDanio(float cantidad)
