@@ -12,9 +12,6 @@ public class MoverCapsula : MonoBehaviour
     private float tiempoDeSalto;
     public float tiempoMaximoDeSalto = 2f;
 
-    private int contadorEspacio = 0;
-    private bool puedeVolar = false;
-
     public Transform firePoint;
 
     public float fuerzaEmpujeArea = 5f; // Ajusta la fuerza del empuje
@@ -27,28 +24,6 @@ public class MoverCapsula : MonoBehaviour
         Saltar();
         HacerDanioEmpujar();
         EmpujarArea();
-
-        // Permitir volar si se presiona la tecla de espacio dos veces consecutivas
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            contadorEspacio++;
-
-            if (contadorEspacio == 2)
-            {
-                puedeVolar = true;
-            }
-        }
-        else if (Input.GetKeyUp(KeyCode.Space))
-        {
-            contadorEspacio = 0;
-            puedeVolar = false;
-        }
-
-        // Volar si la capacidad está activada
-        if (puedeVolar)
-        {
-            Volar();
-        }
     }
 
     void Mover()
@@ -99,11 +74,6 @@ public class MoverCapsula : MonoBehaviour
         }
     }
 
-    void Volar()
-    {
-        GetComponent<Rigidbody>().AddForce(Vector3.up * 10f, ForceMode.Acceleration);
-    }
-
     void HacerDanioEmpujar()
     {
         if (Input.GetKeyDown(KeyCode.E))
@@ -117,7 +87,34 @@ public class MoverCapsula : MonoBehaviour
                     if (enemigo != null)
                     {
                         Vector3 direccion = (enemigo.transform.position - transform.position).normalized;
-                        enemigo.RecibirDanioEmpujar(20f, direccion * 10f);
+
+                        if (puedeEmpujar())
+                        {
+                            enemigo.RecibirDanioEmpujar(10f, direccion * 2f);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Resto del código...
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            RaycastHit hit;
+            if (Physics.Raycast(firePoint.position, firePoint.forward, out hit))
+            {
+                if (hit.transform.CompareTag("Enemigo"))
+                {
+                    Enemigo enemigo = hit.transform.GetComponent<Enemigo>();
+                    if (enemigo != null)
+                    {
+                        Vector3 direccion = (enemigo.transform.position - transform.position).normalized;
+
+                        if (puedeEmpujar())
+                        {
+                            enemigo.RecibirDanioEmpujar(20f, direccion * 10f);
+                        }
                     }
                 }
             }
@@ -158,5 +155,11 @@ public class MoverCapsula : MonoBehaviour
         {
             enSuelo = false;
         }
+    }
+
+    bool puedeEmpujar()
+    {
+        // Agrega aquí cualquier condición adicional que desees para permitir o no el empuje
+        return true; // Cambia esto según tus necesidades
     }
 }

@@ -8,6 +8,8 @@ TagManager:
   - Borde
   - BolaAzul
   - Enemigo
+  - Ground
+  - Enemy
   layers:
   - Default
   - TransparentFX
