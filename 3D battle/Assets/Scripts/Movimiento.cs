@@ -24,6 +24,8 @@ public class MoverCapsula : MonoBehaviour
     public float cooldownDuracion = 3f;
     public float danioAlJugador = 5f;
 
+    public CanvasManager canvasManager;
+
     void Start()
     {
         vidaActual = vidaMaxima;
@@ -112,7 +114,6 @@ public class MoverCapsula : MonoBehaviour
                         if (puedeEmpujar())
                         {
                             enemigo.RecibirDanioEmpujar(10f, direccion * 2f);
-                            RecibirDanio(danioAlJugador); // Aplica daño al jugador
                         }
                     }
                 }
@@ -136,7 +137,6 @@ public class MoverCapsula : MonoBehaviour
                         if (puedeEmpujar())
                         {
                             enemigo.RecibirDanioEmpujar(20f, direccion * 10f);
-                            RecibirDanio(danioAlJugador); // Aplica daño al jugador
                         }
                     }
                 }
@@ -158,14 +158,13 @@ public class MoverCapsula : MonoBehaviour
                     {
                         Vector3 direccion = (enemigo.transform.position - transform.position).normalized;
                         enemigo.RecibirDanioEmpujar(15f, direccion * fuerzaEmpujeArea);
-                        RecibirDanio(danioAlJugador); // Aplica daño al jugador
                     }
                 }
             }
         }
     }
 
-    void OnCollisionEnter(Collision collision)
+    void OnCollisionStay(Collision collision)
     {
         if (collision.gameObject.CompareTag("Suelo"))
         {
@@ -194,9 +193,18 @@ public class MoverCapsula : MonoBehaviour
     {
         return true; // Puedes ajustar la lógica según tus necesidades
     }
-
     public void RecibirDanio(float cantidad)
     {
+        RecibirDanio(cantidad, 0, Vector3.zero);
+    }
+
+    //Ahora en la funcion RecibirDanio puedes añadir un valor empuje y direccion de este empuje pero esto es unicamente opcional, si no se añade nada la funcion tomará el valor 0
+    public void RecibirDanio(float cantidad, float fuerzaEmpuje, Vector3 direccion)
+    {
+        Rigidbody rb = GetComponent<Rigidbody>();
+        rb.AddForce(direccion, ForceMode.Impulse);
+
+
         if (puedeRecibirDanio)
         {
             vidaActual -= cantidad;
@@ -222,7 +230,7 @@ public class MoverCapsula : MonoBehaviour
 
     void ActualizarBarraDeVida()
     {
-        // Puedes agregar aquí la lógica para actualizar la barra de vida del jugador si la tienes.
+        canvasManager.barraDeVida.fillAmount = vidaActual / vidaMaxima;
     }
 
     void DerrotarJugador()
