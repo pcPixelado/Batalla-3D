@@ -26,6 +26,8 @@ public class MoverCapsula : MonoBehaviour
 
     public CanvasManager canvasManager;
 
+    private Enemigo ultimoEnemigoQueDano;
+
     void Start()
     {
         vidaActual = vidaMaxima;
@@ -39,13 +41,16 @@ public class MoverCapsula : MonoBehaviour
         HacerDanioEmpujar();
         EmpujarArea();
 
-        // Actualiza el temporizador de cooldown
         cooldownTimer += Time.deltaTime;
 
-        // Puedes ajustar el tiempo de cooldown según tus necesidades
         if (cooldownTimer >= cooldownDuracion)
         {
             puedeRecibirDanio = true;
+        }
+
+        if (vidaActual <= 0f)
+        {
+            DerrotarJugador();
         }
     }
 
@@ -114,13 +119,12 @@ public class MoverCapsula : MonoBehaviour
                         if (puedeEmpujar())
                         {
                             enemigo.RecibirDanioEmpujar(10f, direccion * 2f);
+                            ultimoEnemigoQueDano = enemigo;
                         }
                     }
                 }
             }
         }
-
-        // Resto del código...
 
         if (Input.GetKeyDown(KeyCode.R))
         {
@@ -137,6 +141,7 @@ public class MoverCapsula : MonoBehaviour
                         if (puedeEmpujar())
                         {
                             enemigo.RecibirDanioEmpujar(20f, direccion * 10f);
+                            ultimoEnemigoQueDano = enemigo;
                         }
                     }
                 }
@@ -158,6 +163,7 @@ public class MoverCapsula : MonoBehaviour
                     {
                         Vector3 direccion = (enemigo.transform.position - transform.position).normalized;
                         enemigo.RecibirDanioEmpujar(15f, direccion * fuerzaEmpujeArea);
+                        ultimoEnemigoQueDano = enemigo;
                     }
                 }
             }
@@ -177,6 +183,7 @@ public class MoverCapsula : MonoBehaviour
             if (enemigo != null)
             {
                 RecibirDanio(enemigo.dañoAlJugador);
+                ultimoEnemigoQueDano = enemigo;
             }
         }
     }
@@ -191,19 +198,18 @@ public class MoverCapsula : MonoBehaviour
 
     bool puedeEmpujar()
     {
-        return true; // Puedes ajustar la lógica según tus necesidades
+        return true;
     }
+
     public void RecibirDanio(float cantidad)
     {
         RecibirDanio(cantidad, 0, Vector3.zero);
     }
 
-    //Ahora en la funcion RecibirDanio puedes añadir un valor empuje y direccion de este empuje pero esto es unicamente opcional, si no se añade nada la funcion tomará el valor 0
     public void RecibirDanio(float cantidad, float fuerzaEmpuje, Vector3 direccion)
     {
         Rigidbody rb = GetComponent<Rigidbody>();
         rb.AddForce(direccion, ForceMode.Impulse);
-
 
         if (puedeRecibirDanio)
         {
@@ -217,7 +223,6 @@ public class MoverCapsula : MonoBehaviour
                 DerrotarJugador();
             }
 
-            // Inicia el cooldown al recibir daño
             IniciarCooldown();
         }
     }
@@ -235,7 +240,74 @@ public class MoverCapsula : MonoBehaviour
 
     void DerrotarJugador()
     {
-        Debug.Log("Jugador derrotado");
-        // Implementa aquí cualquier lógica que desees cuando el jugador queda sin vida
+        Debug.Log("Jugador MUERTO PA SIEMPRE..... A NO SER");
+
+        if (ultimoEnemigoQueDano != null)
+        {
+            // Configurar la cámara en el enemigo que derrotó al jugador
+            ConfigurarCamara(ultimoEnemigoQueDano.transform);
+        }
+
+        // Llamada a la función de respawn
+        RespawnJugador();
+    }
+
+    // Método de respawn
+    void RespawnJugador()
+    {
+        // Desactivar jugador y ocultar la barra de vida durante el respawn
+        gameObject.SetActive(false);
+        canvasManager.barraDeVida.fillAmount = 0f;
+
+        // Posicionar al jugador en el punto de respawn
+        GameObject puntoRespawn = GameObject.FindGameObjectWithTag("PuntoDeRespawn");
+        if (puntoRespawn != null)
+        {
+            transform.position = puntoRespawn.transform.position;
+            transform.rotation = puntoRespawn.transform.rotation;
+        }
+
+        // Reiniciar la vida
+        vidaActual = vidaMaxima;
+
+        // Reactivar al jugador después de un breve retraso (puedes ajustar esto)
+        Invoke("ReactivarJugador", 2f);
+    }
+
+    void ConfigurarCamara(Transform objetivo)
+    {
+        Camera mainCamera = Camera.main;
+
+        if (mainCamera != null)
+        {
+            mainCamera.transform.SetParent(objetivo);
+            mainCamera.transform.localPosition = new Vector3(0f, 2f, -5f);
+            mainCamera.transform.localRotation = Quaternion.identity;
+        }
+        else
+        {
+            Debug.LogError("La cámara principal es nula");
+        }
+    }
+
+    void ReactivarJugador()
+    {
+        // Restaurar la cámara al jugador
+        ConfigurarCamara(transform);
+
+        // Reactivar al jugador y actualizar la barra de vida
+        gameObject.SetActive(true);
+        ActualizarBarraDeVida();
+    }
+
+    // Nuevo: Método para reactivar la cámara en el enemigo después del tiempo de reaparición
+    void ReactivarEnemigoCamara()
+    {
+        if (ultimoEnemigoQueDano != null)
+        {
+            // Restaurar la cámara al enemigo
+            ConfigurarCamara(ultimoEnemigoQueDano.transform);
+            ultimoEnemigoQueDano = null; // Limpiar referencia al enemigo
+        }
     }
 }

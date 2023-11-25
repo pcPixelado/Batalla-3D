@@ -5,33 +5,27 @@ public class Enemigo : MonoBehaviour
     public float vidaMaxima = 100f;
     private float vidaActual;
 
-    public float dañoAlJugador = 5f;
+    public float dañoAlJugador = 50f;
     public float velocidadMovimiento = 3f;
 
-    private Transform jugador; // Referencia al transform del jugador
+    private Transform jugador;
 
     void Start()
     {
         vidaActual = vidaMaxima;
-        jugador = GameObject.FindGameObjectWithTag("Player").transform; // Asigna la referencia al jugador
+        jugador = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     void Update()
     {
-        MoverHaciaJugador(); // Llama al nuevo método de movimiento hacia el jugador
-
-        // Puedes agregar cualquier lógica adicional que necesites en el Update del enemigo.
+        MoverHaciaJugador();
     }
 
     void MoverHaciaJugador()
     {
-        // Verifica si la referencia al jugador es válida
         if (jugador != null)
         {
-            // Calcula la dirección hacia el jugador
             Vector3 direccion = (jugador.position - transform.position).normalized;
-
-            // Mueve al enemigo en la dirección del jugador
             transform.Translate(direccion * velocidadMovimiento * Time.deltaTime);
         }
     }
@@ -69,13 +63,12 @@ public class Enemigo : MonoBehaviour
 
     void ActualizarBarraDeVida()
     {
-        // Si tienes una barra de vida, puedes actualizarla aquí.
+        // Puedes agregar la lógica de la barra de vida aquí.
     }
 
     void DerrotarEnemigo()
     {
         Debug.Log("Enemigo derrotado");
-        // Aquí puedes agregar cualquier acción que desees cuando el enemigo es derrotado.
         Destroy(gameObject);
     }
 }
