@@ -1,14 +1,14 @@
 using UnityEngine;
 
-public class HabilidadGenerarMeteoro : MonoBehaviour
+public class HabilidadAsteroide : MonoBehaviour
 {
     public GameObject meteoroPrefab;
-    public float cooldownDuracion = 5f; // Duración del cooldown en segundos
+    public float cooldownDuracion = 10f; // Duración del cooldown en segundos
     private float tiempoUltimoUso;
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.F) && PuedeUsarHabilidad())
+        if (Input.GetKeyDown(KeyCode.V) && PuedeUsarHabilidad())
         {
             GenerarMeteoro();
         }
@@ -22,7 +22,7 @@ public class HabilidadGenerarMeteoro : MonoBehaviour
         if (enemigoCercano != null)
         {
             // Genera el meteoro sobre el enemigo
-            Instantiate(meteoroPrefab, enemigoCercano.transform.position + Vector3.up * 5f, Quaternion.identity);
+            Instantiate(meteoroPrefab, enemigoCercano.transform.position + Vector3.up * 25f, Quaternion.identity);
 
             // Registra el tiempo de uso de la habilidad
             tiempoUltimoUso = Time.time;
