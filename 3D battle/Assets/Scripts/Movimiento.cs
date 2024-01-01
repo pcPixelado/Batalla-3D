@@ -17,6 +17,8 @@ public class MoverCapsula : MonoBehaviour
     public float fuerzaEmpujeArea = 5f;
     public float radioEmpujeArea = 5f;
 
+   
+
     private float vidaMaxima = 100f;
     private float vidaActual;
     private bool puedeRecibirDanio = true;
@@ -39,7 +41,7 @@ public class MoverCapsula : MonoBehaviour
         RotarConMouse();
         Saltar();
         HacerDanioEmpujar();
-        EmpujarArea();
+        
 
         cooldownTimer += Time.deltaTime;
 
@@ -149,26 +151,7 @@ public class MoverCapsula : MonoBehaviour
         }
     }
 
-    void EmpujarArea()
-    {
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            Collider[] colliders = Physics.OverlapSphere(transform.position, radioEmpujeArea);
-            foreach (Collider collider in colliders)
-            {
-                if (collider.CompareTag("Enemigo"))
-                {
-                    Enemigo enemigo = collider.GetComponent<Enemigo>();
-                    if (enemigo != null)
-                    {
-                        Vector3 direccion = (enemigo.transform.position - transform.position).normalized;
-                        enemigo.RecibirDanioEmpujar(15f, direccion * fuerzaEmpujeArea);
-                        ultimoEnemigoQueDano = enemigo;
-                    }
-                }
-            }
-        }
-    }
+    
 
     void OnCollisionStay(Collision collision)
     {
