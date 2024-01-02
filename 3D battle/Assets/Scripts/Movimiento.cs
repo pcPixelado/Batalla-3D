@@ -14,10 +14,9 @@ public class MoverCapsula : MonoBehaviour
 
     public Transform firePoint;
 
-    public float fuerzaEmpujeArea = 5f;
-    public float radioEmpujeArea = 5f;
+    public GameObject escudoPrefab;  // Prefab del escudo
 
-   
+    private GameObject escudoObject;  // Objeto del escudo instanciado
 
     private float vidaMaxima = 100f;
     private float vidaActual;
@@ -33,6 +32,17 @@ public class MoverCapsula : MonoBehaviour
     void Start()
     {
         vidaActual = vidaMaxima;
+
+        // Instanciar el escudo con la rotación del jugador
+        if (escudoPrefab != null)
+        {
+            escudoObject = Instantiate(escudoPrefab, transform.position, transform.rotation);
+            escudoObject.transform.parent = transform;  // Hacer que el escudo sea hijo del jugador
+        }
+        else
+        {
+            Debug.LogError("Prefab del escudo no asignado en el inspector.");
+        }
     }
 
     void Update()
@@ -41,7 +51,7 @@ public class MoverCapsula : MonoBehaviour
         RotarConMouse();
         Saltar();
         HacerDanioEmpujar();
-        
+        ActualizarEscudo();
 
         cooldownTimer += Time.deltaTime;
 
@@ -70,9 +80,12 @@ public class MoverCapsula : MonoBehaviour
         Vector3 movimiento = new Vector3(totalMovimientoX, 0f, totalMovimientoZ);
         movimiento.Normalize();
 
+        // Rotar la entrada de movimiento a la dirección de la cámara
+        movimiento = Camera.main.transform.TransformDirection(movimiento);
+
         float velocidadActual = Input.GetKey(KeyCode.LeftShift) ? velocidadEsprinte : velocidadMovimiento;
 
-        transform.Translate(movimiento * velocidadActual * Time.deltaTime);
+        transform.Translate(movimiento * velocidadActual * Time.deltaTime, Space.World);
     }
 
     void RotarConMouse()
@@ -151,8 +164,6 @@ public class MoverCapsula : MonoBehaviour
         }
     }
 
-    
-
     void OnCollisionStay(Collision collision)
     {
         if (collision.gameObject.CompareTag("Suelo"))
@@ -227,22 +238,17 @@ public class MoverCapsula : MonoBehaviour
 
         if (ultimoEnemigoQueDano != null)
         {
-            // Configurar la cámara en el enemigo que derrotó al jugador
             ConfigurarCamara(ultimoEnemigoQueDano.transform);
         }
 
-        // Llamada a la función de respawn
         RespawnJugador();
     }
 
-    // Método de respawn
     void RespawnJugador()
     {
-        // Desactivar jugador y ocultar la barra de vida durante el respawn
         gameObject.SetActive(false);
         canvasManager.barraDeVida.fillAmount = 0f;
 
-        // Posicionar al jugador en el punto de respawn
         GameObject puntoRespawn = GameObject.FindGameObjectWithTag("PuntoDeRespawn");
         if (puntoRespawn != null)
         {
@@ -250,10 +256,8 @@ public class MoverCapsula : MonoBehaviour
             transform.rotation = puntoRespawn.transform.rotation;
         }
 
-        // Reiniciar la vida
         vidaActual = vidaMaxima;
 
-        // Reactivar al jugador después de un breve retraso (puedes ajustar esto)
         Invoke("ReactivarJugador", 2f);
     }
 
@@ -275,22 +279,26 @@ public class MoverCapsula : MonoBehaviour
 
     void ReactivarJugador()
     {
-        // Restaurar la cámara al jugador
         ConfigurarCamara(transform);
-
-        // Reactivar al jugador y actualizar la barra de vida
         gameObject.SetActive(true);
         ActualizarBarraDeVida();
     }
 
-    // Nuevo: Método para reactivar la cámara en el enemigo después del tiempo de reaparición
     void ReactivarEnemigoCamara()
     {
         if (ultimoEnemigoQueDano != null)
         {
-            // Restaurar la cámara al enemigo
             ConfigurarCamara(ultimoEnemigoQueDano.transform);
-            ultimoEnemigoQueDano = null; // Limpiar referencia al enemigo
+            ultimoEnemigoQueDano = null;
+        }
+    }
+
+    void ActualizarEscudo()
+    {
+        // Asegúrate de que el objeto del escudo esté asignado y no sea nulo
+        if (escudoObject != null)
+        {
+            escudoObject.transform.rotation = transform.rotation;  // Asignar la rotación del jugador al escudo
         }
     }
 }
