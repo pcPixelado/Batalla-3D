@@ -22,7 +22,7 @@ public class HabilidadGenerarMeteoroF : MonoBehaviour
 
         if (enemigoCercano != null)
         {
-            Instantiate(meteoroPrefab, enemigoCercano.transform.position + Vector3.up * 5f, Quaternion.identity);
+            Instantiate(meteoroPrefab, enemigoCercano.transform.position + Vector3.up * 10f, Quaternion.identity);
             tiempoUltimoUso = Time.time;
         }
     }

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class MoverCapsula : MonoBehaviour
+public class MovimientoPP: MonoBehaviour
 {
     public float velocidadMovimiento = 5f;
     public float velocidadEsprinte = 10f;
@@ -14,7 +14,9 @@ public class MoverCapsula : MonoBehaviour
 
     public Transform firePoint;
 
-    
+    public GameObject escudoPrefab;  // Prefab del escudo
+
+    private GameObject escudoObject;  // Objeto del escudo instanciado
 
     private float vidaMaxima = 100f;
     private float vidaActual;
@@ -31,10 +33,16 @@ public class MoverCapsula : MonoBehaviour
     {
         vidaActual = vidaMaxima;
 
-        
-        
-       
-        
+        // Instanciar el escudo con la rotación del jugador
+        if (escudoPrefab != null)
+        {
+            escudoObject = Instantiate(escudoPrefab, transform.position, transform.rotation);
+            escudoObject.transform.parent = transform;  // Hacer que el escudo sea hijo del jugador
+        }
+        else
+        {
+            Debug.LogError("Prefab del escudo no asignado en el inspector.");
+        }
     }
 
     void Update()
@@ -43,7 +51,7 @@ public class MoverCapsula : MonoBehaviour
         RotarConMouse();
         Saltar();
         HacerDanioEmpujar();
-       
+        ActualizarEscudo();
 
         cooldownTimer += Time.deltaTime;
 
@@ -285,5 +293,12 @@ public class MoverCapsula : MonoBehaviour
         }
     }
 
-    
+    void ActualizarEscudo()
+    {
+        // Asegúrate de que el objeto del escudo esté asignado y no sea nulo
+        if (escudoObject != null)
+        {
+            escudoObject.transform.rotation = transform.rotation;  // Asignar la rotación del jugador al escudo
+        }
+    }
 }

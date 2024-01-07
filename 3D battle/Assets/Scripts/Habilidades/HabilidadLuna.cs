@@ -22,7 +22,7 @@ public class HabilidadLuna : MonoBehaviour
         if (enemigoCercano != null)
         {
             // Genera el meteoro sobre el enemigo
-            Instantiate(meteoroPrefab, enemigoCercano.transform.position + Vector3.up * 1000f, Quaternion.identity);
+            Instantiate(meteoroPrefab, enemigoCercano.transform.position + Vector3.up * 10000f, Quaternion.identity);
 
             // Registra el tiempo de uso de la habilidad
             tiempoUltimoUso = Time.time;
