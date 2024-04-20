@@ -12,6 +12,9 @@ TagManager:
   - Enemy
   - PuntoDeRespawn
   - Meteoro
+  - Ball
+  - Repeledor
+  - PuntoCero
   layers:
   - Default
   - TransparentFX
